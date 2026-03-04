@@ -187,9 +187,10 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <p>และบางคนที่มีความหมาย</p>
         </div>
         <div class="cat-pills">
+          <button class="pill" onclick="selectCat('feeling',this)">ความรู้สึก</button>
           <button class="pill" onclick="selectCat('self',this)">ค้นหาตัวเอง</button>
-          <button class="pill" onclick="selectCat('goal',this)">เป้าหมาย</button>
           <button class="pill" onclick="selectCat('relation',this)">ความสัมพันธ์</button>
+          <button class="pill" onclick="selectCat('goal',this)">เป้าหมาย</button>
           <button class="pill" onclick="selectCat('all',this)">ทุกหมวด</button>
         </div>
         <button class="btn-start" id="btn-start" onclick="startSession()" disabled>มานั่งก่อน</button>
@@ -304,6 +305,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       </div>
       <div id="tab-questions" class="tab-pane">
         <div class="modal-section">
+          <div class="modal-label">คำถาม — ความรู้สึก</div>
+          <textarea class="modal-textarea" id="q-feeling"></textarea>
+          <div class="modal-hint">วางคำถามบรรทัดละ 1 ข้อ · ควรมีอย่างน้อย 10 ข้อ</div>
+        </div>
+        <div class="modal-section">
           <div class="modal-label">คำถาม — ค้นหาตัวเอง</div>
           <textarea class="modal-textarea" id="q-self"></textarea>
           <div class="modal-hint">วางคำถามบรรทัดละ 1 ข้อ · ควรมีอย่างน้อย 10 ข้อ</div>
@@ -365,12 +371,34 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <script>
 const DEFAULT_Q={
+  feeling:[
+    "ตอนนี้ในใจของคุณมีความรู้สึกอะไรอยู่บ้าง",
+    "ความรู้สึกนี้อยู่กับคุณมานานแค่ไหนแล้ว",
+    "มีอะไรที่ทำให้คุณรู้สึกหนักใจในช่วงนี้ไหม",
+    "มีความรู้สึกอะไรที่คุณยังไม่ได้บอกใครไหม",
+    "ตอนนี้ร่างกายของคุณรู้สึกอย่างไร",
+    "ความรู้สึกที่มากที่สุดตอนนี้คืออะไร",
+    "มีอะไรที่คุณอยากปล่อยวางแต่ยังทำไม่ได้ไหม",
+    "คุณรู้สึกเหนื่อยกับเรื่องอะไรเป็นพิเศษไหม",
+    "มีช่วงเวลาไหนที่คุณรู้สึกเบาขึ้นบ้างไหม",
+    "ความรู้สึกตอนนี้คล้ายกับเรื่องไหนในชีวิตคุณบ้างไหม",
+    "มีบางอย่างที่คุณอยากร้องไห้แต่ยังไม่ได้ร้องไหม",
+    "คุณรู้สึกเหงาในแบบที่บอกใครไม่ได้บ้างไหม",
+    "ความสงบในแบบที่คุณต้องการ เป็นแบบไหน",
+    "มีใครที่ทำให้คุณรู้สึกปลอดภัยได้ไหม",
+    "คุณกำลังให้อภัยตัวเองกับเรื่องอะไรอยู่ไหม",
+    "มีอะไรที่คุณอยากให้อภัยตัวเองบ้างไหม",
+    "ความรู้สึกดีๆ เล็กๆ ในวันนี้มีอะไรบ้าง",
+    "ถ้าความรู้สึกนี้มีรูปร่าง มันจะเป็นอะไร",
+    "ถ้าคุณฟังเสียงในใจของตัวเองตอนนี้ มันกำลังบอกอะไร",
+    "สิ่งที่ทำให้คุณรู้สึกอุ่นใจเล็กๆ ในช่วงนี้มีอะไรบ้าง"
+  ],
   self:["ตอนนี้ในใจของตัวคุณเอง เป็นอย่างไรบ้าง","มีเรื่องไหนที่คุณอยากให้ถูกฟังมากขึ้นไหม","ช่วงเวลาแบบไหนที่คุณรู้สึกเป็นตัวเองมากที่สุด","มีส่วนไหนของตัวคุณเองที่เงียบมานานไหม","ตอนนี้อะไรสำคัญกับคุณมากที่สุด","มีบางอย่างที่คุณกำลังแบกไว้เงียบๆ ไหม","อะไรทำให้คุณรู้สึกมีพลังมากขึ้นเล็กน้อย","มีเรื่องไหนที่คุณยังไม่อยากแตะต้องตอนนี้ไหม","ช่วงเวลาไหนที่คุณรู้สึกมั่นใจที่สุด","คุณอยากเข้าใจตัวคุณเองเรื่องไหนมากขึ้น","ตอนนี้ตัวคุณเองกำลังต้องการอะไร","มีความคิดใดที่อยู่เบื้องหลังการตัดสินใจของคุณไหม","อะไรทำให้คุณรู้สึกภูมิใจเล็กๆ","ถ้าวันนี้คุณใจดีกับตัวเองอีกนิด จะเกิดอะไรขึ้น","มีเรื่องไหนที่คุณอยากยอมรับมากขึ้น","เส้นทางที่คุณกำลังเดินอยู่ตอนนี้ รู้สึกสอดคล้องกับหัวใจไหม","คุณกำลังให้เวลากับสิ่งที่สำคัญกับตัวคุณเองหรือไม่","มีความรู้สึกใดที่คุณยังไม่ได้ตั้งชื่อให้มันไหม","ถ้าไม่มีใครตัดสิน คุณอยากเป็นแบบไหน","เวอร์ชันของตัวคุณเองที่สบายใจที่สุด เป็นแบบไหน"],
   goal:["ตอนนี้คุณอยากเห็นอะไรค่อยๆ ดีขึ้นในชีวิต","อีก 6 เดือนข้างหน้า คุณอยากรู้สึกแบบไหน","เป้าหมายไหนที่มีความหมายกับตัวคุณเองในช่วงนี้","ก้าวเล็กๆ ที่คุณพร้อมเริ่ม คืออะไร","อะไรจะช่วยให้คุณก้าวต่อได้ง่ายขึ้น","คุณอยากเติบโตด้านใดในชีวิตมากที่สุด","ถ้าคุณฟังเสียงภายในของตัวเอง มันกำลังบอกอะไร","อะไรทำให้เป้าหมายนี้สำคัญกับคุณ","คุณอยากรักษาสิ่งดีๆ อะไรไว้ระหว่างการเปลี่ยนแปลง","ความสำเร็จในแบบของตัวคุณเอง คืออะไร","วันธรรมดาที่คุณอยากมีมากขึ้น เป็นแบบไหน","อะไรที่คุณพร้อมเริ่มต้น แม้จะยังไม่สมบูรณ์แบบ","มีสิ่งใดที่คุณอยากให้โอกาสกับมันอีกครั้ง","อะไรคือความคืบหน้าเล็กๆ ที่คุณอาจมองข้ามไป","ถ้าคุณเดินต่อไปด้วยจังหวะของตัวเอง มันจะเป็นอย่างไร","อะไรทำให้คุณรู้สึกใกล้กับเป้าหมายมากขึ้นเล็กน้อย","คุณอยากขอบคุณตัวเองเรื่องอะไรในอนาคต","อะไรทำให้เส้นทางนี้ยังมีความหมายกับคุณ","ถ้าวันนี้คุณเริ่มต้นเล็กๆ หนึ่งอย่าง มันจะเป็นอะไร","ภาพชีวิตที่คุณอยากตื่นขึ้นมาเจอทุกวัน เป็นแบบไหน"],
   relation:["ตอนนี้ความสัมพันธ์ไหนสำคัญกับคุณมากที่สุด","คุณรู้สึกอย่างไรเมื่ออยู่กับคนนั้น","คุณอยากให้ความสัมพันธ์นี้รู้สึกแบบไหนมากขึ้น","มีสิ่งใดที่คุณอยากสื่อสารอย่างอ่อนโยน","คุณรู้สึกได้รับการรับฟังมากแค่ไหน","ถ้ามองจากมุมของอีกฝ่าย เขาอาจกำลังรู้สึกอย่างไรอยู่บ้าง","ในความสัมพันธ์นี้ คุณรู้สึกปลอดภัยแค่ไหน","มีสิ่งใดที่คุณอยากเข้าใจเกี่ยวกับอีกฝ่ายมากขึ้น","อะไรทำให้ความสัมพันธ์นี้ยังมีความหมายกับคุณ","มีบางอย่างที่คุณพร้อมจะวางลงไหม","ถ้าความสัมพันธ์นี้อบอุ่นขึ้นอีกนิด มันจะเป็นอย่างไร","ในความสัมพันธ์นี้ คุณได้ดูแลตัวคุณเองเพียงพอไหม","มีคำขอบคุณใดที่ยังไม่ได้พูดออกไป","มีบทสนทนาใดที่คุณอยากเริ่มต้นอย่างนุ่มนวล","ความสัมพันธ์นี้กำลังสอนอะไรกับตัวคุณเอง","คุณสามารถเป็นตัวคุณเองได้มากแค่ไหนในความสัมพันธ์นี้","มีสิ่งใดที่คุณอยากให้เขาเข้าใจเกี่ยวกับคุณ","คุณรู้สึกได้รับการมองเห็นในแบบที่เป็นคุณไหม","คุณกำลังให้ในแบบที่ตัวคุณเองสบายใจหรือไม่","ถ้าความสัมพันธ์นี้เดินต่อไปอย่างอ่อนโยน คุณอยากเห็นอะไรเกิดขึ้น"]
 };
 
-const CAT={self:{name:'ค้นหาตัวเอง',icon:'🔍'},goal:{name:'เป้าหมาย',icon:'🎯'},relation:{name:'ความสัมพันธ์',icon:'💞'}};
+const CAT={feeling:{name:'ความรู้สึก',icon:'🌊'},self:{name:'ค้นหาตัวเอง',icon:'🔍'},goal:{name:'เป้าหมาย',icon:'🎯'},relation:{name:'ความสัมพันธ์',icon:'💞'}};
 let selCat=null,sess={cards:[],answers:[],idx:0};
 let cfg={pw:'mty2025',imgs:{},questions:{}};
 try{const s=localStorage.getItem('mty4');if(s){cfg={...cfg,...JSON.parse(s)};}}catch(e){}
@@ -392,7 +420,14 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.fl
 
 function startSession(){
   let pool=[];
-  if(selCat==='all'){['self','goal','relation'].forEach(c=>getQ(c).forEach(q=>pool.push({q,cat:c})));pool=shuffle(pool).slice(0,10);}
+  if(selCat==='all'){
+    // Flow Coaching: IF→IF→SD→SD→RC→RC→DG→DG→IF→DG
+    const flowCats=['feeling','feeling','self','self','relation','relation','goal','goal','feeling','goal'];
+    const pools={};
+    ['feeling','self','relation','goal'].forEach(c=>{pools[c]=shuffle(getQ(c));});
+    const usedIdx={feeling:0,self:0,relation:0,goal:0};
+    pool=flowCats.map(c=>{const q=pools[c][usedIdx[c]%pools[c].length];usedIdx[c]++;return{q,cat:c};});
+  }
   else{pool=shuffle(getQ(selCat)).slice(0,10).map(q=>({q,cat:selCat}));}
   sess={cards:pool,answers:new Array(pool.length).fill(''),idx:0};
   renderCard();showScr('card');
@@ -409,7 +444,7 @@ function renderCard(){
   document.getElementById('prog-fill').style.width=((idx+1)/cards.length*100)+'%';
   renderDots();
   // Render thin circle symbol per category
-const iconMap={self:'○',goal:'◇',relation:'◯'};
+const iconMap={feeling:'◌',self:'○',goal:'◇',relation:'◯'};
 const iconEl=document.getElementById('card-icon');
 iconEl.textContent=iconMap[c.cat]||'○';
 iconEl.style.fontFamily="'Noto Serif Thai',serif";
@@ -470,28 +505,12 @@ async function showSummary(){
 
   const qa=sess.cards.map((c,i)=>`คำถาม: ${c.q}\nสิ่งที่เขียน: ${sess.answers[i]||'(ไม่ได้เขียน)'}`).join('\n\n');
 
-  const prompt=`You are a calm reflective companion inside MTY Reflection Lab.
-Your role is to gently reflect and invite small real-life movement.
+  const catHint=selCat==='feeling'?'\nNote: The user entered from the "ความรู้สึก" category. Be especially gentle, grounding, and warm.'
+    :selCat==='relation'?'\nNote: The user focused on "ความสัมพันธ์" — mirror connection and empathy themes.'
+    :selCat==='goal'?'\nNote: The user focused on "เป้าหมาย" — honor both aspiration and readiness.'
+    :'';
 
-Respond ONLY in Thai language. Write as flowing prose — no headers, no bullet points, no bold, no emoji.
-
-In every response follow this structure:
-1. Acknowledge warmly (1–2 sentences): Receive what the user shared with warmth and respect. Do not over-praise.
-2. Reflect the core emotional theme (1–2 sentences): Mirror the pattern or feeling you notice. Use phrases like "ดูเหมือนว่า..." or "น้ำเสียงในสิ่งที่เขียนบอกถึง..."
-3. Highlight one clear underlying value or desire (1 sentence): Name it softly and clearly.
-4. Invite one small, self-chosen action within the next 24 hours (1 question only): The action must be small, realistic, and optional. The action invitation must be grounded in what the user actually wrote, not a generic question. The question must end with a clear inviting word such as "ไหม" or "บ้างไหม" — never leave the question open-ended or without a proper ending. If the user is not ready, normalize awareness as progress.
-
-Important rules:
-- Do not give advice
-- Do not say "คุณควร"
-- Do not provide step-by-step solutions
-- Do not use bullet points, headers, or bold text
-- Keep response concise — 6–8 short lines maximum
-- Tone must feel safe, warm, and never demanding
-- The user must feel free, not evaluated
-
-What the user wrote:
-${qa}`;
+  const prompt='You are a calm reflective companion inside MTY Reflection Lab — not a coach, not a therapist. You are a quiet friend who helps the user see their own thoughts more clearly.\n\nRespond ONLY in Thai language. Write as flowing prose — no headers, no bullet points, no bold, no emoji.\n\nIn every response follow this structure exactly:\n1. Acknowledge warmly (1–2 sentences): Begin with warmth. Try "ขอบคุณที่แบ่งปัน..." or "ไม่ใช่เรื่องง่ายที่จะพูดถึง..." Do not over-praise.\n2. Reflect the core emotional theme (1–2 sentences): Mirror the feeling or pattern. Use "ดูเหมือนว่า..." or "สิ่งที่เขียนสะท้อนว่า..."\n3. Deep insight — one quiet truth the user may not have noticed yet (1 sentence): Surface it gently as a possibility. Example: "บางทีความใส่ใจที่คุณให้คนอื่น อาจเป็นสิ่งที่คุณอยากได้รับกลับมาด้วยเหมือนกัน" — never lecture.\n4. Invite one small, self-chosen action within the next 24 hours (1 question only): Small, realistic, optional, grounded in what the user wrote. Must end with "ไหม" or "บ้างไหม". If not ready, normalize awareness as enough.\n5. Gentle closing (1 sentence): End with quiet possibility. Keep this spirit: "บางทีสิ่งเล็กๆ ที่คุณกำลังคิดอยู่ อาจเป็นจุดเริ่มต้นแล้วก็ได้" — adapt naturally, no pressure.'+catHint+'\n\nImportant rules:\n- Do not give advice or say "คุณควร" or "ทางที่ดีที่สุดคือ"\n- Do not provide step-by-step solutions\n- Do not use bullet points, headers, or bold text\n- Keep response concise — 7–9 short lines maximum\n- Tone: calm, warm, safe — the user must feel seen, not evaluated\n\nWhat the user wrote:\n'+qa;
 
   try{
     const res=await fetch('https://mty-ai-proxy.masteryork7.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:prompt}]})});
@@ -539,7 +558,7 @@ function checkPw(){
 }
 function switchTab(id,el){document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');el.classList.add('active');}
 function loadSettings(){
-  ['self','goal','relation'].forEach(cat=>{document.getElementById('q-'+cat).value=(cfg.questions[cat]||DEFAULT_Q[cat]).join('\n');});
+  ['feeling','self','goal','relation'].forEach(cat=>{document.getElementById('q-'+cat).value=(cfg.questions[cat]||DEFAULT_Q[cat]).join('\n');});
   ['bg','fself','fgoal','frelation','bself','bgoal','brelation'].forEach(k=>{const el=document.getElementById('pv-'+k);if(cfg.imgs[k])el.innerHTML=`<img src="${cfg.imgs[k]}">`;});
 }
 function trigUp(k){document.getElementById('up-'+k).click();}
@@ -551,7 +570,7 @@ function handleUp(k,input){
 }
 function saveSettings(){
   const np=document.getElementById('new-pw').value;if(np)cfg.pw=np;
-  ['self','goal','relation'].forEach(cat=>{
+  ['feeling','self','goal','relation'].forEach(cat=>{
     const lines=document.getElementById('q-'+cat).value.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
     if(lines.length>=1)cfg.questions[cat]=lines;
   });

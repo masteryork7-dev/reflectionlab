@@ -114,7 +114,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .summary-wrap{width:100%;max-width:640px;padding:36px 20px 60px;}
 .summary-title{font-family:'Noto Serif Thai',serif;font-size:28px;font-weight:500;margin-bottom:6px;}
 .summary-sub{color:var(--text-muted);font-size:13px;margin-bottom:28px;}
-.ai-card{background:rgba(255,255,255,0.75);border:1px solid var(--teal-border);border-radius:var(--radius);padding:28px;margin-bottom:24px;box-shadow:var(--shadow-soft);backdrop-filter:blur(8px);position:relative;overflow:hidden;}
+.ai-card{background:rgba(255,255,255,0.75);border:1px solid var(--teal-border);border-radius:var(--radius);padding:28px;margin-bottom:24px;box-shadow:var(--shadow-soft);backdrop-filter:blur(8px);position:relative;}
 .ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),transparent);}
 .ai-label{font-size:10px;color:var(--teal-dark);letter-spacing:2.5px;font-weight:700;margin-bottom:14px;text-transform:uppercase;}
 .ai-text{font-size:15px;line-height:2.0;color:var(--text);white-space:pre-line;font-family:'Noto Serif Thai',serif;font-weight:400;}
@@ -158,7 +158,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pw-error{color:#c0392b;font-size:12px;margin-top:6px;display:none;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--cream);padding:11px 24px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;z-index:300;transition:opacity .3s;white-space:nowrap;}
 .toast.show{opacity:1;}
-@media print{body{background:white;}body::before{display:none;}.topbar,.card-topbar,.summary-actions,.modal-overlay{display:none !important;}.page{padding-top:0;}#screen-summary{display:flex !important;}.ai-card{box-shadow:none;border:1px solid #ddd;overflow:visible !important;max-height:none !important;height:auto !important;break-inside:avoid;page-break-inside:avoid;}.answer-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid;page-break-inside:avoid;overflow:visible !important;}.ai-text{overflow:visible !important;max-height:none !important;height:auto !important;white-space:pre-wrap !important;word-break:break-word !important;}.summary-wrap{overflow:visible !important;max-height:none !important;height:auto !important;}.answer-a{word-break:break-word !important;overflow-wrap:break-word !important;white-space:pre-wrap !important;}.dot-pulse{display:none !important;}}
+@media print{body{background:white;}body::before{display:none;}.topbar,.card-topbar,.summary-actions,.modal-overlay{display:none !important;}.page{padding-top:0;}#screen-summary{display:flex !important;}.ai-card{box-shadow:none;border:1px solid #ddd;overflow:visible !important;max-height:none !important;height:auto !important;break-inside:avoid;page-break-inside:avoid;}.answer-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid;page-break-inside:avoid;overflow:visible !important;}.ai-text{display:block !important;overflow:visible !important;max-height:none !important;height:auto !important;white-space:pre-wrap !important;word-break:break-word !important;}.ai-loading{display:none !important;}.summary-wrap{overflow:visible !important;max-height:none !important;height:auto !important;}.answer-a{word-break:break-word !important;overflow-wrap:break-word !important;white-space:pre-wrap !important;}.dot-pulse{display:none !important;}}
 </style>
 </head>
 <body>
@@ -584,6 +584,38 @@ document.getElementById('modal').addEventListener('click',function(e){if(e.targe
 // Secret shortcut: Shift + M to open settings
 document.addEventListener('keydown',function(e){
   if(e.shiftKey && e.key==='M') openSettings();
+});
+
+// Fix print: force expand AI card before printing
+window.addEventListener('beforeprint', function(){
+  const aiOut = document.getElementById('ai-out');
+  const aiCard = aiOut ? aiOut.closest('.ai-card') : null;
+  if(aiCard){
+    aiCard.style.overflow = 'visible';
+    aiCard.style.height = 'auto';
+    aiCard.style.maxHeight = 'none';
+  }
+  if(aiOut){
+    aiOut.style.overflow = 'visible';
+    aiOut.style.height = 'auto';
+    aiOut.style.maxHeight = 'none';
+    aiOut.style.whiteSpace = 'pre-wrap';
+  }
+  // Also expand all answer items
+  document.querySelectorAll('.answer-item,.answer-a').forEach(el=>{
+    el.style.overflow='visible';
+    el.style.height='auto';
+    el.style.maxHeight='none';
+  });
+});
+window.addEventListener('afterprint', function(){
+  const aiOut = document.getElementById('ai-out');
+  const aiCard = aiOut ? aiOut.closest('.ai-card') : null;
+  if(aiCard){ aiCard.style.overflow=''; aiCard.style.height=''; aiCard.style.maxHeight=''; }
+  if(aiOut){ aiOut.style.overflow=''; aiOut.style.height=''; aiOut.style.maxHeight=''; aiOut.style.whiteSpace=''; }
+  document.querySelectorAll('.answer-item,.answer-a').forEach(el=>{
+    el.style.overflow=''; el.style.height=''; el.style.maxHeight='';
+  });
 });
 </script>
 </body>

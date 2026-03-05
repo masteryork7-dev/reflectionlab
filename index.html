@@ -158,7 +158,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .pw-error{color:#c0392b;font-size:12px;margin-top:6px;display:none;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--cream);padding:11px 24px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;z-index:300;transition:opacity .3s;white-space:nowrap;}
 .toast.show{opacity:1;}
-@media print{body{background:white;}body::before{display:none;}.topbar,.card-topbar,.summary-actions,.modal-overlay{display:none !important;}.page{padding-top:0;}#screen-summary{display:flex !important;}.ai-card,.answer-item{box-shadow:none;border:1px solid #ddd;}}
+@media print{body{background:white;}body::before{display:none;}.topbar,.card-topbar,.summary-actions,.modal-overlay{display:none !important;}.page{padding-top:0;}#screen-summary{display:flex !important;}.ai-card,.answer-item{box-shadow:none;border:1px solid #ddd;break-inside:avoid;page-break-inside:avoid;}.ai-card{overflow:visible !important;max-height:none !important;height:auto !important;}.ai-text{overflow:visible !important;max-height:none !important;height:auto !important;white-space:pre-wrap !important;}.summary-wrap{overflow:visible !important;max-height:none !important;height:auto !important;}.answer-item{overflow:visible !important;}}
 </style>
 </head>
 <body>
